@@ -72,7 +72,7 @@ impl NfParam {
     pub fn get_parse_matches<'a>() -> Command<'a> {
 
         let app = Command::new("Nf")
-            .version("1.0")
+            .version("0.1.0")
             .author("l3una. <l3una@outlook.com>")
             .about("Does awesome things")
             .arg(
