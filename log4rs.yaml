@@ -1,0 +1,55 @@
+refresh_rate: 30 seconds
+appenders:
+  console:
+    kind: console
+    target: stderr  # stdout
+    encoder:
+#      kind: json
+      pattern: "{d(%Y-%m-%d %H:%M:%S)} - {l} - {t} - [{M}<{T}> - {f}:{L}] - {m}{n}"
+  requests:
+    kind: file
+    path: "log/empty.log"
+    encoder:
+      pattern: "{d(%Y-%m-%d %H:%M:%S)} - {l} - {t} - [{M}<{T}> - {f}:{L}] - {m}{n}"
+      # d: date, {d(%Y-%m-%d %H:%M:%S)}
+      # f: file
+      # h: highlight
+      # l: level
+      # L: line
+      # m: message
+      # M: module
+      # n: new line
+      # t: target
+      # T: thread
+      # I: thread id
+      # X: mdc
+  roll:
+    kind: rolling_file
+    path: "log/roll.log"
+    append: true
+    encoder:
+#      kind: pattern
+      pattern: "{d(%Y-%m-%d %H:%M:%S)} - {l} - {t} - [{M}<{T}> - {f}:{L}] - {m}{n}"
+    policy:
+      kind: compound
+      trigger:
+        kind: size
+        limit: 1024000   # 1024 kb
+      roller:
+        kind: fixed_window
+        pattern: 'log/roll.log.{{}}'
+        base: 1
+        count: 5
+root:
+  level: debug
+  appenders:
+    - console
+    - roll
+loggers:
+  app::backend::db:
+    level: info
+  app::requests:
+    level: info
+    appenders:
+      - roll
+    additive: false
