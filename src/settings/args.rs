@@ -36,9 +36,6 @@ pub struct RunServerParam {
     // 指向网络跳转链路。
     pub link_nodes: Vec<String>,    // 可以为空
 
-    // 如果设置了shell，可以将shell作为接收端的输入输出。
-    pub shell: Option<String>,
-
     // 加解密算法
     pub crypt: SupportCrypt,
 }
@@ -65,7 +62,6 @@ pub enum SupportCrypt {
 pub struct NfParam {
     pub config: Option<String>,
     pub listen: String,
-    pub shell: Option<String>,
     pub link_nodes: Vec<String>,
     pub crypt: SupportCrypt,
     pub log_level: String,
@@ -75,7 +71,7 @@ pub struct NfParam {
 impl NfParam {
     pub fn get_parse_matches<'a>() -> Command<'a> {
 
-        let app = Command::new("Nf Program")
+        let app = Command::new("Nf")
             .version("1.0")
             .author("l3una. <l3una@outlook.com>")
             .about("Does awesome things")
@@ -97,15 +93,6 @@ impl NfParam {
                     .help("forward link node address.[ip:port,ip:port]\neg: 127.0.0.1:8010,127.0.0.1:8011")
                     .required(false)
                     .takes_value(true),
-            )
-            .arg(
-                Arg::new("SHELL")
-                    .short('s')
-                    .long("shell")
-                    .value_name("SHELL")
-                    .help("use local shell. fetch stdin & stdout。   not support")
-                    .required(false)
-                    .takes_value(true)
             )
             .arg(
                 Arg::new("CRYPT")
@@ -170,7 +157,6 @@ impl NfParam {
         } else {
             level = "warn";
         }
-        let shell = StringUtil::option_str2option_string(server.value_of("SHELL"));
         let crypt_opt = StringUtil::option_str2option_string(server.value_of("CRYPT"));
         let key_opt = StringUtil::option_str2option_string(server.value_of("KEY"));
         let mut crypt = SupportCrypt::None;
@@ -197,7 +183,6 @@ impl NfParam {
         let mut nf_param = NfParam {
             config: None,
             listen: server.value_of("LISTEN_ADDRESS")?.to_string(),
-            shell,
             link_nodes,
             crypt,
             log_level: level.to_string()

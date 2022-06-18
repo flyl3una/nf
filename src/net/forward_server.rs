@@ -9,14 +9,12 @@ use crate::settings::args::SupportCrypt;
 pub struct ForwardServer {
     pub listen: String,
     pub link_nodes: Vec<String>,
-    pub shell: Option<String>,
     pub crypt: SupportCrypt,
 }
 
 #[derive(Debug, Clone, Serialize)]
 pub struct ForwardServerContext{
     pub link_nodes: Vec<String>,        // 该值存在，则直接将所有数据转发至下一跳地址
-    pub shell: Option<String>,          // 该值存在，则捕获shell指定的bash 输入输出
     pub crypt: SupportCrypt,
 }
 
@@ -27,11 +25,10 @@ pub struct ForwardClientContext {
 
 impl ForwardServer {
 
-    pub fn new(listen: String, link_nodes: Vec<String>, shell: Option<String>, crypt: SupportCrypt) -> Self {
+    pub fn new(listen: String, link_nodes: Vec<String>, crypt: SupportCrypt) -> Self {
         Self {
             listen,
             link_nodes,
-            shell,
             crypt
         }
     }
@@ -43,9 +40,8 @@ impl ForwardServer {
     pub async fn run(&self) -> NfResult<()> {
         // 如果下一跳地址存在，则连接下一跳地址
         let link_nodes = self.link_nodes.clone();
-        let shell = self.shell.clone();
         let crypt = self.crypt.clone();
-        let server_context = ForwardServerContext{link_nodes, shell, crypt};
+        let server_context = ForwardServerContext{link_nodes, crypt};
         // 监听本地地址
         self.listen(server_context).await
     }

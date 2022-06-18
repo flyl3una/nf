@@ -52,7 +52,6 @@ async fn run(run_args: &NfParam) -> NfResult<()> {
     let server_param = RunServerParam {
         listen_address: run_arg.listen,
         link_nodes: run_arg.link_nodes,
-        shell: run_arg.shell,
         crypt: run_args.crypt.clone(),
     };
     server(server_param).await
@@ -61,7 +60,7 @@ async fn run(run_args: &NfParam) -> NfResult<()> {
 
 async fn server(param: RunServerParam) -> NfResult<()> {
 
-    let nf_server = ForwardServer::new(param.listen_address, param.link_nodes, param.shell, param.crypt);
+    let nf_server = ForwardServer::new(param.listen_address, param.link_nodes, param.crypt);
     nf_server.run().await
 }
 
